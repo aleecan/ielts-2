@@ -29,20 +29,41 @@ import TranslationInputDialog from '../Components/TranslationInputDialog'
 import Styles from './Styles/TranslationListScreenStyle'
 
 class Row extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      collapsed: props.collapsed,
+      checked: props.checked
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      collapsed: nextProps.collapsed,
+      checked: nextProps.checked
+    })
+  }
 
   _handleRowPress = () => {
     const { toggleCollapsed, rowData } = this.props
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
     toggleCollapsed(rowData)
+    this.setState({
+      collapsed: !this.state.collapsed
+    })
   }
 
   _handleCheckboxPress = () => {
     const { toggleChecked, rowData } = this.props
     toggleChecked(rowData)
+    this.setState({
+      checked: this.state.checked
+    })
   }
 
   render() {
-    const {ch, en, remarks, rowId, collapsed, checked} = this.props
+    const {collapsed, checked} = this.state
+    const {ch, en, remarks, rowId} = this.props
     return (
       <TouchableHighlight key={rowId} style={[Styles.row, rowId == 0 ? {marginTop: Metrics.baseMargin} : {marginTop: 0}]} underlayColor={Colors.c1} onPress={this._handleRowPress}>
         <View style={{flexDirection: 'row'}}>
