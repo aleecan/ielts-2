@@ -71,7 +71,7 @@ class Row extends React.Component {
             <Checkbox
               checked={checked}
               style={{backgroundColor: Colors.transparent, color:Colors.c3, borderRadius: 3}}
-              onChange={(name, checked) => this._handleCheckboxPress}/>
+              onChange={this._handleCheckboxPress}/>
           </TouchableOpacity>
           <View style={{flex:1}}>
             <Text style={Styles.textRow1}>{parseInt(rowId, 10) + 1}.{ch}</Text>
