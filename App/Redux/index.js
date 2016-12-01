@@ -7,7 +7,8 @@ import rootSaga from '../Sagas/'
 export default () => {
   /* ------------- Assemble The Reducers ------------- */
   const rootReducer = combineReducers({
-    translationlist: require('./TranslationListRedux').reducer
+    translationlist: require('./TranslationListRedux').reducer,
+    imapstorage: require('./ImapStorageRedux').reducer,
   })
 
   return configureStore(rootReducer, rootSaga)

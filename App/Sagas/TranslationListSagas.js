@@ -10,7 +10,7 @@ export function * exportToClipboard (action) {
   translationList.forEach( translation => {
     text += `${translation.ch}\n${translation.en}\n${translation.remarks}\n\n`
   })
-  console.info(text)
+  // console.info(text)
   Clipboard.setString(text)
   Alert.alert('','Already Exported To Clipboard')
 }

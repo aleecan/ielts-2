@@ -8,7 +8,7 @@ import Immutable from 'seamless-immutable'
 const {Types, Creators} = createActions({
   toggleAddModal: null,
   toggleMenu: null,
-  addTranslation: ['translation'],
+  addTranslation: ['translation', 'messageId'],
   exportToClipboard: null,
   clearList: null,
   deleteTranslation: ['translation'],
@@ -25,6 +25,7 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   addModalVisible: false,
   menuVisible: false,
+  messageId: '',
   translationList: [
     {
       en: 'He really aggravates me when he yells at me like that.',
@@ -45,10 +46,10 @@ const toggleMenu = state => state.merge({
   menuVisible: !state.menuVisible
 })
 
-const addTranslation = (state, {translation}) => {
+const addTranslation = (state, {translation, messageId}) => {
   let translationList = state.translationList.asMutable()
   Array.isArray(translation) ? translationList = translationList.concat(translation) : translationList.push(translation)
-  return state.merge({translationList})
+  return state.merge({translationList, messageId: messageId || state.messageId})
 }
 
 const deleteTranslation = (state, {translation}) => {
@@ -95,16 +96,13 @@ const toggleChecked = (state, {translation}) => {
   return state
 }
 
-const exportToClipboard = state => state
-
-const clearList = state => state.merge({translationList: []})
+const clearList = state => state.merge({translationList: [], messageId: ''})
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.TOGGLE_ADD_MODAL]: toggleAddModal,
   [Types.ADD_TRANSLATION]: addTranslation,
   [Types.TOGGLE_MENU]: toggleMenu,
-  [Types.EXPORT_TO_CLIPBOARD]: exportToClipboard,
   [Types.CLEAR_LIST]: clearList,
   [Types.DELETE_TRANSLATION]: deleteTranslation,
   [Types.MOVE_TO_TOP]: moveToTop,

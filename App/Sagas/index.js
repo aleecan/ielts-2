@@ -7,10 +7,12 @@ import DebugSettings from '../Config/DebugSettings'
 
 import { StartupTypes } from '../Redux/StartupRedux'
 import { TranslationListTypes } from '../Redux/TranslationListRedux'
+import { ImapStorageTypes } from '../Redux/ImapStorageRedux'
 /* ------------- Sagas ------------- */
 
 import { startup } from './StartupSagas'
 import { exportToClipboard } from './TranslationListSagas'
+import { initEmailAccount, getMessages, sendMessage } from './ImapStorageSagas'
 
 /* ------------- API ------------- */
 
@@ -23,8 +25,12 @@ const api = DebugSettings.useFixtures ? FixtureAPI : API.create()
 export default function * root () {
   yield [
     // some sagas only receive an action
-    takeLatest(StartupTypes.STARTUP, startup),
+    // takeLatest(StartupTypes.STARTUP, startup),
 
-    takeLatest(TranslationListTypes.EXPORT_TO_CLIPBOARD, exportToClipboard)
+    takeLatest(TranslationListTypes.EXPORT_TO_CLIPBOARD, exportToClipboard),
+
+    takeLatest(ImapStorageTypes.INIT_EMAIL_ACCOUNT, initEmailAccount),
+    takeLatest(ImapStorageTypes.GET_MESSAGES, getMessages),
+    takeLatest(ImapStorageTypes.SEND_MESSAGE, sendMessage),
   ]
 }

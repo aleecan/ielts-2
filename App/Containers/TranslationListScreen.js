@@ -23,6 +23,7 @@ import { Actions as NavigationActions } from 'react-native-router-flux'
 import { connect } from 'react-redux'
 import { Images, Colors, Metrics } from '../Themes'
 import TranslationListActions from '../Redux/TranslationListRedux'
+import ImapStorageActions from '../Redux/ImapStorageRedux'
 import NavBarMenu from '../Components/NavBarMenu'
 import TranslationInputDialog from '../Components/TranslationInputDialog'
 
@@ -99,7 +100,6 @@ class TranslationListScreen extends React.Component {
     this.setState({
       dataSource: ds.cloneWithRows(props.translationList)
     })
-
   }
 
   _renderRow = (rowData, secId, rowId, rowMap) => {
@@ -145,7 +145,7 @@ class TranslationListScreen extends React.Component {
   }
 
   _renderMenu = () => {
-    const {menuVisible, toggleAddModal, toggleMenu, exportToClipboard, clearList} = this.props
+    const {menuVisible, toggleAddModal, toggleMenu, exportToClipboard, clearList, sendMessage} = this.props
     const items = [{
       icon: 'plus',
       text: 'Add',
@@ -165,6 +165,13 @@ class TranslationListScreen extends React.Component {
         text: 'Clear',
         handlePress: () => {
           clearList()
+          toggleMenu()
+        }
+    },{
+        icon: 'envelope-o',
+        text: 'Save',
+        handlePress: () => {
+          sendMessage()
           toggleMenu()
         }
     }]
@@ -239,6 +246,7 @@ const mapDispatchToProps = (dispatch) => {
     moveToTop: (translation) => dispatch(TranslationListActions.moveToTop(translation)),
     toggleCollapsed: (translation) => dispatch(TranslationListActions.toggleCollapsed(translation)),
     toggleChecked: (translation) => dispatch(TranslationListActions.toggleChecked(translation)),
+    sendMessage: () => dispatch(ImapStorageActions.sendMessage())
   }
 }
 

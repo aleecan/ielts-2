@@ -17,13 +17,14 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Animatable from 'react-native-animatable'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import { Images, Colors, Metrics } from '../Themes'
+import { text2translation } from '../Lib/TranslationFormat'
 
 export default class TranslationInputDialog extends React.Component {
   constructor() {
-      super()
-      this.state = {
-        input: ''
-      }
+    super()
+    this.state = {
+      input: ''
+    }
   }
 
   _handlePress =  () => {
@@ -32,21 +33,7 @@ export default class TranslationInputDialog extends React.Component {
       this.props.handlePress()
       return
     }
-    const bl = /^[\n\r]+/gm
-    const groups = input.split(bl)
-    const list = []
-    groups.forEach((group) => {
-      const arr = group.split('\n')
-      if(!arr[0]) return
-      const translation = {
-        ch: arr[0].trim(),
-        en: (arr[1] || '').trim(),
-        remarks: (arr[2] || '').trim(),
-        collapsed: true,
-        checked: false
-      }
-      list.push(translation)
-    })
+    const list = text2translation(input)
     this.props.handlePress(list)
   }
 

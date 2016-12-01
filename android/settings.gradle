@@ -1,6 +1,8 @@
 rootProject.name = 'ielts'
 
 include ':app'
+include ':react-native-mona-imap'
+project(':react-native-mona-imap').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-mona-imap/android')
 include ':react-native-vector-icons'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':react-native-maps'

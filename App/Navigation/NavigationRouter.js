@@ -11,6 +11,7 @@ import CustomNavBar from '../Components/CustomNavBar'
 
 // screens identified by the router
 import TranslationListScreen from '../Containers/TranslationListScreen'
+import ImapStorageScreen from '../Containers/ImapStorageScreen'
 
 //Actions
 import TranslationListActions from '../Redux/TranslationListRedux'
@@ -26,7 +27,8 @@ class NavigationRouter extends Component {
       <Router>
         <Scene key='drawer' component={NavigationDrawer} open={false}>
           <Scene key='drawerChildrenWrapper' navigationBarStyle={Styles.navBar} titleStyle={Styles.title} leftButtonIconStyle={Styles.leftButton} rightButtonTextStyle={Styles.rightButton}>
-            <Scene initial key='translationListScreen' component={TranslationListScreen} title='' renderRightButton={()=>NavItems.menuButton(toggleMenu)} />
+            <Scene key='translationListScreen' component={TranslationListScreen} title='Translation' renderRightButton={()=>NavItems.menuButton(toggleMenu)} />
+            <Scene initial key='imapStorageScreen' component={ImapStorageScreen} title='Saved List' type='replace' />
           </Scene>
         </Scene>
       </Router>

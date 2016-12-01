@@ -23,27 +23,21 @@ class DrawerContent extends Component {
     this.context.drawer.toggle()
   }
 
-  handlePressComponents = () => {
-    this.toggleDrawer()
-    NavigationActions.componentExamples()
-  }
-
-  handlePressDevice = () => {
-    this.toggleDrawer()
-    NavigationActions.deviceInfo()
-  }
-
   handleTranslation = () => {
     this.toggleDrawer()
     NavigationActions.translationListScreen()
+  }
+
+  handleImapStorage = () => {
+    this.toggleDrawer()
+    NavigationActions.imapStorageScreen()
   }
 
   render () {
     return (
       <ScrollView style={styles.container}>
         {/* <Image source={Images.logo} style={styles.logo} /> */}
-        {/* <DrawerButton text='Component Examples' onPress={this.handlePressComponents} /> */}
-        {/* <DrawerButton text='Device Info' onPress={this.handlePressDevice} /> */}
+        <DrawerButton text='Saved List' onPress={this.handleImapStorage} />
         <DrawerButton text='Translation' onPress={this.handleTranslation} />
       </ScrollView>
     )
