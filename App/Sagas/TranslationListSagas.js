@@ -3,12 +3,13 @@ import {
   Clipboard,
   Alert
 } from 'react-native'
+import { translation2text } from '../Lib/TranslationFormat'
 
 export function * exportToClipboard (action) {
   const translationList = yield select(state => state.translationlist.translationList)
   let text = ''
   translationList.forEach( translation => {
-    text += `${translation.ch}\n${translation.en}\n${translation.remarks}\n\n`
+    text += translation2text(translation) + '\n'
   })
   // console.info(text)
   Clipboard.setString(text)

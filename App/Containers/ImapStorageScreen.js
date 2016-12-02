@@ -26,7 +26,7 @@ import { Images, Colors, Metrics } from '../Themes'
 import ImapStorageActions from '../Redux/ImapStorageRedux'
 import TranslationListActions from '../Redux/TranslationListRedux'
 import { text2translation } from '../Lib/TranslationFormat'
-
+import EmailAccountInput from '../Components/EmailAccountInput'
 import Styles from './Styles/ImapStorageScreenStyle'
 
 class Row extends React.Component {
@@ -45,63 +45,14 @@ class Row extends React.Component {
 
 class HiddenRow extends React.Component {
   render() {
-    const {rowId, rowData, handleDelete} = this.props
+    const {rowId, secId, rowData, rowMap, handleDelete} = this.props
     return(
       <View style={[{flex:1, justifyContent:'flex-end', flexDirection:'row'}, Styles.hiddenRow, rowId == 0 ? {marginTop: Metrics.baseMargin} : {marginTop: 0}]}>
         <TouchableOpacity onPress={() => {
-          handleDelete(rowData)
           rowMap[`${secId}${rowId}`].closeRow()
+          handleDelete(rowData)
         }} style={{alignItems: 'flex-end', justifyContent: 'center', marginRight: 10}}>
           <Icon name='trash-o' size={34} color={Colors.c1} />
-        </TouchableOpacity>
-      </View>
-    )
-  }
-}
-
-class EmailAccountInput extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      brand: props.brandList[0],
-      usermail: '',
-      password: '',
-      folderName: 'ielts'
-    }
-  }
-  _handleSubmit = () => {
-    const {brand, usermail, password, folderName} = this.state
-    if(!brand) {
-      Alert.alert('', 'Please Choose Your Email Provider')
-      return
-    }
-    if(!usermail) {
-      Alert.alert('', 'Please Input Your Email Address')
-      return
-    }
-    if(!password) {
-      Alert.alert('', 'Please Input Your Email Password')
-      return
-    }
-    this.props.handleSubmit({brand, usermail, password, folderName})
-  }
-  render() {
-    const { brandList } = this.props
-    return (
-      <View style={{backgroundColor: Colors.c1, padding: Metrics.baseMargin}}>
-        <Text style={{fontSize: Metrics.fs1}}>Input Your Email Account</Text>
-        <Picker
-          selectedValue={this.state.brand}
-          onValueChange={(brand) => this.setState({brand})}>
-          {brandList.map( brand => <Picker.Item key={brand} label={brand} value={brand} />)}
-        </Picker>
-        <TextInput value={this.state.usermail} onChangeText={(usermail) => this.setState({usermail})}
-          placeholder="your email address"/>
-        <TextInput value={this.state.password} onChangeText={(password) => this.setState({password})} secureTextEntry={true}
-          placeholder="your email password"/>
-        <TouchableOpacity style={{backgroundColor: Colors.c4, margin: 10, height: 30, justifyContent:'center', alignItems:'center'}}
-          onPress={this._handleSubmit}>
-          <Text>OK</Text>
         </TouchableOpacity>
       </View>
     )
@@ -119,7 +70,7 @@ class ImapStorageScreen extends React.Component {
   }
 
   componentDidMount() {
-    // this.props.getMessages()
+    this._getMessages()
   }
 
   componentWillReceiveProps(props) {
@@ -127,6 +78,14 @@ class ImapStorageScreen extends React.Component {
     this.setState({
       dataSource: ds.cloneWithRows(props.messages)
     })
+    this._getMessages()
+  }
+
+  _getMessages = () => {
+    const { emailAccountInited } = this.props
+    if(emailAccountInited) {
+       setTimeout(()=>this.props.getMessages(), 2000)
+    }
   }
 
   _renderRow = (rowData, secId, rowId, rowMap) => {
@@ -142,8 +101,10 @@ class ImapStorageScreen extends React.Component {
   }
 
   _renderHiddenRow = (rowData, secId, rowId, rowMap) => {
+    const { deleteMessage } = this.props
     return (
-      <HiddenRow rowData={rowData} rowId={rowId} rowMap={rowMap} />
+      <HiddenRow rowData={rowData} secId={secId} rowId={rowId} rowMap={rowMap}
+        handleDelete={() => deleteMessage(rowData.messageId)}/>
     )
   }
 
@@ -169,11 +130,12 @@ class ImapStorageScreen extends React.Component {
     return (
       <SwipeListView
         dataSource={this.state.dataSource}
+        renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
         enableEmptySections={true}
         renderHeader={this._renderHeader}
         renderRow={this._renderRow}
         disableRightSwipe={true}
-        previewFirstRow={true}
+        previewFirstRow={false}
         previewOpenValue={-100}
         renderHiddenRow={this._renderHiddenRow}
         rightOpenValue={-100}/>
@@ -206,6 +168,7 @@ const mapDispatchToProps = (dispatch) => {
     addTranslation: (translation, messageId) => dispatch(TranslationListActions.addTranslation(translation, messageId)),
     clearList: () => dispatch(TranslationListActions.clearList()),
     sendMessage: () => dispatch(ImapStorageActions.sendMessage()),
+    deleteMessage: (messageId) => dispatch(ImapStorageActions.deleteMessage(messageId)),
     initEmailAccount: (emailAccount) => dispatch(ImapStorageActions.initEmailAccount(emailAccount))
   }
 }

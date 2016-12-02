@@ -7,6 +7,7 @@ import Immutable from 'seamless-immutable'
 
 const {Types, Creators} = createActions({
   toggleAddModal: null,
+  toggleEditModal: null,
   toggleMenu: null,
   addTranslation: ['translation', 'messageId'],
   exportToClipboard: null,
@@ -14,7 +15,9 @@ const {Types, Creators} = createActions({
   deleteTranslation: ['translation'],
   moveToTop: ['translation'],
   toggleCollapsed: ['translation'],
-  toggleChecked: ['translation']
+  toggleChecked: ['translation'],
+  updateTranslation: ['translation', 'rowIndex'],
+  setEditTranslation: ['translation', 'rowIndex']
 })
 
 export const TranslationListTypes = Types
@@ -24,6 +27,7 @@ export default Creators
 
 export const INITIAL_STATE = Immutable({
   addModalVisible: false,
+  editModalVisible: false,
   menuVisible: false,
   messageId: '',
   translationList: [
@@ -34,12 +38,19 @@ export const INITIAL_STATE = Immutable({
       collapsed: true,
       checked: false
     }
-  ]
+  ],
+
+  editTranslation: '',
+  editRowIndex: -1
 })
 
 /* ------------- Reducers ------------- */
 const toggleAddModal = state => state.merge({
   addModalVisible: !state.addModalVisible
+})
+
+const toggleEditModal = state => state.merge({
+  editModalVisible: !state.editModalVisible
 })
 
 const toggleMenu = state => state.merge({
@@ -96,16 +107,32 @@ const toggleChecked = (state, {translation}) => {
   return state
 }
 
+const updateTranslation = (state, {translation, rowIndex}) => {
+  let translationList = state.translationList.asMutable()
+  translationList.splice(rowIndex, 1)
+  translationList.splice(rowIndex, 0, translation)
+  return state.merge({translationList})
+}
+
+const setEditTranslation = (state, {translation, rowIndex}) => state.merge({editTranslation: translation, editRowIndex: rowIndex})
+
 const clearList = state => state.merge({translationList: [], messageId: ''})
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.TOGGLE_ADD_MODAL]: toggleAddModal,
-  [Types.ADD_TRANSLATION]: addTranslation,
   [Types.TOGGLE_MENU]: toggleMenu,
-  [Types.CLEAR_LIST]: clearList,
+  [Types.TOGGLE_ADD_MODAL]: toggleAddModal,
+  [Types.TOGGLE_EDIT_MODAL]: toggleEditModal,
+
+  [Types.ADD_TRANSLATION]: addTranslation,
+  [Types.UPDATE_TRANSLATION]: updateTranslation,
   [Types.DELETE_TRANSLATION]: deleteTranslation,
   [Types.MOVE_TO_TOP]: moveToTop,
+  [Types.SET_EDIT_TRANSLATION]: setEditTranslation,
+
+  [Types.CLEAR_LIST]: clearList,
+
   [Types.TOGGLE_COLLAPSED]: toggleCollapsed,
-  [Types.TOGGLE_CHECKED]: toggleChecked
+  [Types.TOGGLE_CHECKED]: toggleChecked,
+
 })

@@ -20,10 +20,10 @@ import { Images, Colors, Metrics } from '../Themes'
 import { text2translation } from '../Lib/TranslationFormat'
 
 export default class TranslationInputDialog extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
-      input: ''
+      input: props.input || ''
     }
   }
 

@@ -12,7 +12,7 @@ import { ImapStorageTypes } from '../Redux/ImapStorageRedux'
 
 import { startup } from './StartupSagas'
 import { exportToClipboard } from './TranslationListSagas'
-import { initEmailAccount, getMessages, sendMessage } from './ImapStorageSagas'
+import { initEmailAccount, getMessages, sendMessage, deleteMessage } from './ImapStorageSagas'
 
 /* ------------- API ------------- */
 
@@ -32,5 +32,6 @@ export default function * root () {
     takeLatest(ImapStorageTypes.INIT_EMAIL_ACCOUNT, initEmailAccount),
     takeLatest(ImapStorageTypes.GET_MESSAGES, getMessages),
     takeLatest(ImapStorageTypes.SEND_MESSAGE, sendMessage),
+    takeLatest(ImapStorageTypes.DELETE_MESSAGE, deleteMessage),
   ]
 }

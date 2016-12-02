@@ -8,15 +8,18 @@ import ImapStorageActions from '../Redux/ImapStorageRedux'
 
 export function * getMessages (action) {
   const { emailAccount } = yield select(state => state.imapstorage)
+  if(!emailAccount) {
+    return
+  }
   const init = yield RNMonaImap.initEmailAccount(emailAccount)
   const messages = yield RNMonaImap.getMessages()
-  console.info(messages)
+  // console.info(messages)
   yield put(ImapStorageActions.getMessagesSuccess(messages))
 }
 
 async function _sendMessage(message = {subject: '', content: '', messageId: ''}) {
   const resp = await RNMonaImap.sendMessage(message)
-  console.info(resp)
+  // console.info(resp)
   resp === true ? Alert.alert('', 'Successfully Saved') : Alert.alert('', 'Save Failed')
 }
 
@@ -44,5 +47,15 @@ export function * initEmailAccount({emailAccount}) {
   } else {
     yield put(ImapStorageActions.initEmailAccountFail(init))
     Alert.alert('', init)
+  }
+}
+
+export function * deleteMessage({messageId}) {
+  const resp = yield RNMonaImap.deleteMessage(messageId)
+  if(resp === true) {
+    yield put(ImapStorageActions.deleteMessageSuccess())
+  } else {
+    yield put(ImapStorageActions.deleteMessageFail(resp))
+    Alert.alert('Delete Failed', resp)
   }
 }

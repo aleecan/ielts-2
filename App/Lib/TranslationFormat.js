@@ -16,3 +16,7 @@ export const text2translation = (input) => {
   })
   return list
 }
+
+export const translation2text = (translation) => {
+  return !translation ? '' : `${translation.ch}\n${translation.en}\n${translation.remarks ? translation.remarks+'\n' : ''}`
+}

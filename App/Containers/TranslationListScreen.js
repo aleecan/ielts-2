@@ -26,6 +26,7 @@ import TranslationListActions from '../Redux/TranslationListRedux'
 import ImapStorageActions from '../Redux/ImapStorageRedux'
 import NavBarMenu from '../Components/NavBarMenu'
 import TranslationInputDialog from '../Components/TranslationInputDialog'
+import { translation2text } from '../Lib/TranslationFormat'
 
 import Styles from './Styles/TranslationListScreenStyle'
 
@@ -43,6 +44,11 @@ class Row extends React.Component {
       collapsed: nextProps.collapsed,
       checked: nextProps.checked
     })
+  }
+
+  _handleRowLongPress = () => {
+    const { handleLongPress, rowData } = this.props
+    handleLongPress(rowData)
   }
 
   _handleRowPress = () => {
@@ -66,7 +72,10 @@ class Row extends React.Component {
     const {collapsed, checked} = this.state
     const {ch, en, remarks, rowId} = this.props
     return (
-      <TouchableHighlight key={rowId} style={[Styles.row, rowId == 0 ? {marginTop: Metrics.baseMargin} : {marginTop: 0}]} underlayColor={Colors.c1} onPress={this._handleRowPress}>
+      <TouchableHighlight key={rowId} style={[Styles.row, rowId == 0 ? {marginTop: Metrics.baseMargin} : {marginTop: 0}]}
+         underlayColor={Colors.c1}
+         onPress={this._handleRowPress}
+         onLongPress={this._handleRowLongPress}>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity style={{width: 30}} onPress={this._handleCheckboxPress}>
             <Checkbox
@@ -103,12 +112,16 @@ class TranslationListScreen extends React.Component {
   }
 
   _renderRow = (rowData, secId, rowId, rowMap) => {
-    const { toggleCollapsed, toggleChecked } = this.props
+    const { toggleCollapsed, toggleChecked, toggleEditModal, setEditTranslation } = this.props
     return (
       <Row rowData={rowData} {...rowData}
         rowId={rowId}
         toggleCollapsed={toggleCollapsed}
-        toggleChecked={toggleChecked} />
+        toggleChecked={toggleChecked}
+        handleLongPress={()=>{
+          setEditTranslation(rowData, rowId)
+          toggleEditModal()
+        }} />
     )
   }
 
@@ -180,15 +193,19 @@ class TranslationListScreen extends React.Component {
     )
   }
 
-  _toggleModalVisible = () => {
-    this.props.toggleAddModal()
-  }
-
   _handleAdd = (translation) => {
     if(translation) {
       this.props.addTranslation(translation)
     }
-    this._toggleModalVisible()
+    this.props.toggleAddModal()
+  }
+
+  _handleUpdate = (translation) => {
+    const { editRowIndex, updateTranslation, toggleEditModal } = this.props
+    if(translation) {
+      updateTranslation(translation[0], editRowIndex)
+    }
+    toggleEditModal()
   }
 
   _renderAddModal = () => {
@@ -206,6 +223,23 @@ class TranslationListScreen extends React.Component {
     )
   }
 
+  _renderEditModal = () => {
+    const {editTranslation, editRowIndex, editModalVisible, toggleEditModal} = this.props
+    const input = translation2text(editTranslation)
+    return (
+      <Modal
+          animationType={"fade"}
+          transparent={true}
+          visible={editModalVisible}
+          onRequestClose={() => {}}
+          >
+         <View style={[Styles.mainContainer, {backgroundColor: Colors.windowTint, flex: 1}]}>
+           <TranslationInputDialog input={input} handlePress={this._handleUpdate}/>
+         </View>
+      </Modal>
+    )
+  }
+
   render () {
     return (
       <View style={{flex:1}}>
@@ -213,16 +247,17 @@ class TranslationListScreen extends React.Component {
         <View style={[Styles.mainContainer]}>
             <SwipeListView
               dataSource={this.state.dataSource}
-              // renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
+              renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
               enableEmptySections={true}
               renderRow={this._renderRow}
               disableRightSwipe={true}
-              previewFirstRow={true}
+              previewFirstRow={false}
               previewOpenValue={-100}
               renderHiddenRow={this._renderHiddenRow}
               rightOpenValue={-100}/>
           {this._renderMenu()}
           {this._renderAddModal()}
+          {this._renderEditModal()}
         </View>
       </View>
     )
@@ -238,15 +273,21 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     toggleAddModal: () => dispatch(TranslationListActions.toggleAddModal()),
+    toggleEditModal: () => dispatch(TranslationListActions.toggleEditModal()),
     toggleMenu: () => dispatch(TranslationListActions.toggleMenu()),
+
     addTranslation: (translation) => dispatch(TranslationListActions.addTranslation(translation)),
+    deleteTranslation: (translation) => dispatch(TranslationListActions.deleteTranslation(translation)),
+    updateTranslation: (translation, rowIndex) => dispatch(TranslationListActions.updateTranslation(translation, rowIndex)),
+    setEditTranslation: (translation, rowIndex) => dispatch(TranslationListActions.setEditTranslation(translation, rowIndex)),
     exportToClipboard: () => dispatch(TranslationListActions.exportToClipboard()),
     clearList: () => dispatch(TranslationListActions.clearList()),
-    deleteTranslation: (translation) => dispatch(TranslationListActions.deleteTranslation(translation)),
+
     moveToTop: (translation) => dispatch(TranslationListActions.moveToTop(translation)),
     toggleCollapsed: (translation) => dispatch(TranslationListActions.toggleCollapsed(translation)),
     toggleChecked: (translation) => dispatch(TranslationListActions.toggleChecked(translation)),
-    sendMessage: () => dispatch(ImapStorageActions.sendMessage())
+
+    sendMessage: () => dispatch(ImapStorageActions.sendMessage()),
   }
 }
 

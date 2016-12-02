@@ -137,7 +137,6 @@ android {
 dependencies {
     compile project(':react-native-mona-imap')
     compile project(':react-native-vector-icons')
-    compile project(':react-native-maps')
     compile project(':react-native-i18n')
     compile project(':react-native-device-info')
     compile project(':react-native-config')

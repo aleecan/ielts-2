@@ -14,6 +14,10 @@ const {Types, Creators} = createActions({
   sendMessageSuccess: null,
   sendMessageFail: ['errorMessage'],
 
+  deleteMessage: ['messageId'],
+  deleteMessageSuccess: null,
+  deleteMessageFail: ['errorMessage'],
+
   initEmailAccount: ['emailAccount'],
   initEmailAccountSuccess: ['emailAccount'],
   initEmailAccountFail: ['errorMessage']
@@ -45,6 +49,10 @@ const sendMessage = state => state.merge({fetching: true})
 const sendMessageSuccess = state => state.merge({fetching: false})
 const sendMessageFail = (state, {errorMessage}) => state.merge({fetching: false, errorMessage})
 
+const deleteMessage = state => state.merge({fetching: true})
+const deleteMessageSuccess = state => state.merge({fetching: false})
+const deleteMessageFail = (state, {errorMessage}) => state.merge({fetching: false, errorMessage})
+
 const initEmailAccount = state => state.merge({fetching: true})
 const initEmailAccountSuccess = (state, {emailAccount}) => state.merge({emailAccount, emailAccountInited: true})
 const initEmailAccountFail = (state, {errorMessage}) => state.merge({errorMessage, emailAccountInited: false})
@@ -59,6 +67,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SEND_MESSAGE]: sendMessage,
   [Types.SEND_MESSAGE_SUCCESS]: sendMessageSuccess,
   [Types.SEND_MESSAGE_FAIL]: sendMessageFail,
+
+  [Types.DELETE_MESSAGE]: deleteMessage,
+  [Types.DELETE_MESSAGE_SUCCESS]: deleteMessageSuccess,
+  [Types.DELETE_MESSAGE_FAIL]: deleteMessageFail,
 
   [Types.INIT_EMAIL_ACCOUNT]: initEmailAccount,
   [Types.INIT_EMAIL_ACCOUNT_SUCCESS]: initEmailAccountSuccess,
