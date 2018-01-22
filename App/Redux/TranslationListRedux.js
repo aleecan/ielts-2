@@ -87,9 +87,8 @@ const toggleCollapsed = (state, {translation}) => {
   let translationList = state.translationList.asMutable()
   let index = translationList.indexOf(translation)
   if(index > -1) {
-    translationList.splice(index, 1)
     translation = translation.set('collapsed', !translation.collapsed)
-    translationList.splice(index, 0, translation)
+    translationList.splice(index, 1, translation)
     return state.merge({translationList})
   }
   return state

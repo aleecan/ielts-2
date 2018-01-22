@@ -21,6 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Animatable from 'react-native-animatable'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import { connect } from 'react-redux'
+import Immutable from 'seamless-immutable'
 import { Images, Colors, Metrics } from '../Themes'
 import TranslationListActions from '../Redux/TranslationListRedux'
 import ImapStorageActions from '../Redux/ImapStorageRedux'
@@ -54,10 +55,10 @@ class Row extends React.Component {
   _handleRowPress = () => {
     const { toggleCollapsed, rowData } = this.props
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-    toggleCollapsed(rowData)
     this.setState({
       collapsed: !this.state.collapsed
     })
+    // toggleCollapsed(rowData)
   }
 
   _handleCheckboxPress = () => {
@@ -97,7 +98,7 @@ class Row extends React.Component {
 class TranslationListScreen extends React.Component {
   constructor(props) {
     super(props)
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => Immutable.is(r1, r2)});
     this.state = {
       ds: ds,
       dataSource: ds.cloneWithRows(props.translationList),

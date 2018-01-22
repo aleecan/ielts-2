@@ -22,6 +22,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Animatable from 'react-native-animatable'
 import { Actions as NavigationActions } from 'react-native-router-flux'
 import { connect } from 'react-redux'
+import Immutable from 'seamless-immutable'
 import { Images, Colors, Metrics } from '../Themes'
 import ImapStorageActions from '../Redux/ImapStorageRedux'
 import TranslationListActions from '../Redux/TranslationListRedux'
@@ -62,7 +63,7 @@ class HiddenRow extends React.Component {
 class ImapStorageScreen extends React.Component {
   constructor(props) {
     super(props)
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => Immutable.is(r1, r2)})
     this.state = {
       ds: ds,
       dataSource: ds.cloneWithRows(props.messages),
@@ -70,7 +71,7 @@ class ImapStorageScreen extends React.Component {
   }
 
   componentDidMount() {
-    this._getMessages()
+    // this._getMessages()
   }
 
   componentWillReceiveProps(props) {
